@@ -34,12 +34,8 @@ print("\t\tMIN TEMP = " + str(min_temp))
 print("\t\tMAX TEMP = " + str(max_temp))
 print("\t\tFREQUENCY READING: 10s")
 
-# New line
 print()
-
 print("START COLLECTING DATA...")
-
-# New line
 print()
 
 while True:

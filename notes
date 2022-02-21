@@ -1,0 +1,24 @@
+- Feb 1, 2022 - Feb 3, 2022
+	Setting up Raspberry Pi and DHT22 sensor
+- Feb 15, 2022
+	Finished basic work flow (collecting data and print them out)
+	Finished bash script that can be used to change preferred temperature
+
+- Feb 16
+	Setting up on Google
+
+- Feb 21
+	Settings up AWS
+	Creating things: An IoT thing is a representation and record of a physical
+	device in the cloud. A physical device needs a thing record in order to work
+	with AWS IoT
+
+	install AWSIoTPythonSDK
+	pip install AWSIoTPythonSDK
+	https://github.com/aws/aws-iot-device-sdk-python/blob/master/README.rst
+	MQTT -> Paho because the sdk is built on top of a modified
+	Paho MQTT Python client library
+
+
+	install Paho MQTT
+	sudo pip install paho-mqtt
