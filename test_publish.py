@@ -47,19 +47,20 @@ mqttc.tls_set(ca_path, certfile=certificate_path, keyfile=private_key_path, cert
 # connecting
 mqttc.connect(aws_iot_endpoint, port_number, keepalive=60)  # connect to aws server
 mqttc.loop_start()                                          
- 
+
+topic = iot["topic"]
 while True:
-    sleep(2)
+    sleep(3)
     if connected:
         localtime = str(time.asctime(time.localtime(time.time())))
         start = "{"
         end = "}"
-        message = "{}\"time\": \"{}\", \"temperature\": \"20\", \"humidity\": \"45\"{}".format(start,localtime,end)
+        message = "{}\"timestamp\":\"{}\", \"temperature\": 20, \"humidity\": 45{}".format(start,localtime,end)
         message = json.dumps(message) 
         message_json = json.loads(message)       
-        mqttc.publish("test/CMPT_Pi", message_json , qos=1)        
+        mqttc.publish(topic, message_json , qos=1)        
         print("msg sent")
         print(message_json)
-
+        
     else:
         print("waiting for connection...")                      

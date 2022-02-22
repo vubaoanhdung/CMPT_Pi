@@ -22,8 +22,8 @@ def on_connect(client, userdata, flags, rc):
 
 # Func for receiving msgs
 def on_message(client, userdata, msg):                      
-    print("topic: "+msg.topic)
-    print("payload: "+str(msg.payload))
+    print("topic: " + msg.topic)
+    print("payload: " + str(msg.payload))
  
 mqttc = mqtt.Client() 
 mqttc.on_connect = on_connect    
