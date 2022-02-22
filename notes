@@ -17,8 +17,14 @@
 	pip install AWSIoTPythonSDK
 	https://github.com/aws/aws-iot-device-sdk-python/blob/master/README.rst
 	MQTT -> Paho because the sdk is built on top of a modified
+	MQTT over TLS -> port 8883
+	MQTT over websocket -> port 443
 	Paho MQTT Python client library
 
 
 	install Paho MQTT
 	sudo pip install paho-mqtt
+
+	https://aws.amazon.com/premiumsupport/knowledge-center/iot-core-publish-mqtt-messages-python/
+	writing test_publish and test_subscribe
+	https://aws.amazon.com/premiumsupport/knowledge-center/iot-core-publish-mqtt-messages-python/
