@@ -8,26 +8,32 @@
 
 import paho.mqtt.client as mqtt
 import ssl
- 
-def on_connect(client, userdata, flags, rc):                # func for making connection
-    print("Connection returned result: " + str(rc) )
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe("#" , 1 )                              # Subscribe to all topics
- 
-def on_message(client, userdata, msg):                      # Func for receiving msgs
+from configparser import ConfigParser
+
+# Config file 
+config_file_name = "config.ini"
+config = ConfigParser()
+config.read(config_file_name)
+iot = config["iot"]
+
+# func for making connection
+def on_connect(client, userdata, flags, rc):                
+    client.subscribe("#" , 1 ) # Subscribe to all topics
+
+# Func for receiving msgs
+def on_message(client, userdata, msg):                      
     print("topic: "+msg.topic)
     print("payload: "+str(msg.payload))
  
-mqttc = mqtt.Client()                                       # mqttc object
-mqttc.on_connect = on_connect                               # assign on_connect func
-mqttc.on_message = on_message                               # assign on_message func
+mqttc = mqtt.Client() 
+mqttc.on_connect = on_connect    
+mqttc.on_message = on_message
 
-aws_iot_endpoint = "abcbli22usgd8-ats.iot.us-west-2.amazonaws.com"      
-port_number = 8883                                            
-ca_path = "/home/pi/CMPT_Pi/aws_config/AmazonRootCA1.pem"                                      
-certificate_path = "/home/pi/CMPT_Pi/aws_config/8f3b4b8f2c385bf994c2293f21a9487e2b7df0e7de0f1c9e10b25e79739c55d8-certificate.pem.crt"                            # <Thing_Name>.cert.pem
-private_key_path = "/home/pi/CMPT_Pi/aws_config/8f3b4b8f2c385bf994c2293f21a9487e2b7df0e7de0f1c9e10b25e79739c55d8-private.pem.key"                          # <Thing_Name>.private.key
+aws_iot_endpoint = iot["aws_iot_endpoint"]
+port_number = int(iot["port_number"])
+ca_path = iot["ca_path"]                                  
+certificate_path = iot["certificate_path"]                          
+private_key_path = iot["private_key_path"]  
 
 mqttc.tls_set(ca_path, certfile=certificate_path, keyfile=private_key_path, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)      
  
