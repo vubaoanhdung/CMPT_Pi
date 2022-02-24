@@ -5,7 +5,7 @@
     ----------
     Raspberry Pi + DHT22 Temperature and Humidifier Sensor
 """
-
+import lambda_invoke
 
 import time
 import board
@@ -14,6 +14,12 @@ import paho.mqtt.client as mqtt
 import ssl
 import json
 from configparser import ConfigParser
+import io
+import logging
+import random
+import zipfile
+import boto3
+from botocore.exceptions import ClientError
 
 # Config file 
 config_file_name = "config.ini"
@@ -33,7 +39,6 @@ mqttc = mqtt.Client() # mqttc object
 mqttc.on_connect = on_connect  # assign on_connect func
 mqttc.on_message = on_message # assign on_message func
 
-
 # Setting up mqttc
 # aws_iot_endpoint = "abcbli22usgd8-ats.iot.us-west-2.amazonaws.com"      # Device data endpoint
 aws_iot_endpoint = iot["aws_iot_endpoint"]
@@ -47,8 +52,6 @@ mqttc.tls_set(ca_path, certfile=certificate_path, keyfile=private_key_path, cert
 mqttc.connect(aws_iot_endpoint, port_number, keepalive=60)  # connect to aws server
 mqttc.loop_start()
 
-
-
 # you can pass DHT22 use_pulseio=False if you wouldn't like to use pulseio.
 # This may be necessary on a Linux single board computer like the Raspberry Pi,
 # but it will not work in CircuitPython.
@@ -57,14 +60,19 @@ dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=False)
 # Connection to AWS IoT Core
 connected = False  
 
+lambda_client = boto3.client('lambda')
+lambda_function_name = 'changeThermostatSetting'
+lambda_params = {}
+
 # Set min_temperature and max_temperature
 # Can change these values by using change_temperature.sh
 min_value='19'
-max_value='25'
+max_value='24'
 
 # Convert min_value and max_value to min_temp and max_temp
 min_temp = int(min_value) 
 max_temp = int(max_value);
+print((min_temp + max_temp)/2)
 
 # Read data every <frequency_reading> seconds
 frequency_reading = int(iot["frequency_reading"])
@@ -86,12 +94,30 @@ while True:
         temperature_c = dhtDevice.temperature
         temperature_f = temperature_c * (9 / 5) + 32
         humidity = dhtDevice.humidity
+        
         print(
             "Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(
                 temperature_f, temperature_c, humidity
             )
         )
         
+        if temperature_c < min_temp:
+            lambda_params = {
+                "mode": "HEAT",
+                "temperature": (min_temp + max_temp)/2
+            }
+            print(lambda_params)
+            result = lambda_invoke.invoke_lambda_function(lambda_client, lambda_function_name, lambda_params)
+            print(json.load(result['Payload']))
+            
+        elif temperature_c > max_temp:
+            lambda_params = {
+                "mode": "COOL",
+                "temperature": (min_temp + max_temp)/2
+            }
+            lambda_invoke.invoke_lambda_function(lambda_client, lambda_function_name, lambda_params)
+        
+            
         if connected:
             localtime = str(time.asctime(time.localtime(time.time())))
             start = "{"
@@ -100,10 +126,6 @@ while True:
             message = json.dumps(message) 
             message_json = json.loads(message)       
             mqttc.publish(topic, message_json , qos=1) 
-            
-            # For Testing       
-            # print("msg sent")
-            # print(message_json)
         
         else:
             print("waiting for connection...")  

@@ -18,6 +18,7 @@ def invoke_lambda_function(lambda_client, function_name, function_params):
                             is serialized to JSON before it is sent to AWS Lambda.
     :return: The response from the function invocation.
     """
+    print("Lambda invoked")
     try:
         response = lambda_client.invoke(
             FunctionName=function_name,
@@ -31,7 +32,7 @@ def invoke_lambda_function(lambda_client, function_name, function_params):
 lambda_client = boto3.client('lambda')
 lambda_params = {
     "mode": "HEAT",
-    "temperature": 19
+    "temperature": 21.5
 }
 lambda_function_name = 'changeThermostatSetting'
 
