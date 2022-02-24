@@ -28,3 +28,12 @@
 	https://aws.amazon.com/premiumsupport/knowledge-center/iot-core-publish-mqtt-messages-python/
 	writing test_publish and test_subscribe
 	https://aws.amazon.com/premiumsupport/knowledge-center/iot-core-publish-mqtt-messages-python/
+
+
+	
+	created lambda functions
+	add layer
+
+	cloudwatch event -> trigger lambda function to refresh token
+
+	https://github.com/awsdocs/
