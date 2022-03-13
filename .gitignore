@@ -1,2 +1,4 @@
 aws_config
 config.ini
+notes
+__pycache__/

@@ -4,39 +4,51 @@
     bav965
     ----------
     Raspberry Pi + DHT22 Temperature and Humidifier Sensor
+    
+    test_subscribe.py
+    Use this file to if we can subscribe to a topic and get all incomming
+    messages of that topic
 """
 
 import paho.mqtt.client as mqtt
 import ssl
 from configparser import ConfigParser
 
-# Config file 
+# Config file
 config_file_name = "config.ini"
 config = ConfigParser()
 config.read(config_file_name)
 iot = config["iot"]
 
 # func for making connection
-def on_connect(client, userdata, flags, rc):                
-    client.subscribe("#" , 1 ) # Subscribe to all topics
+
+
+def on_connect(client, userdata, flags, rc):
+    client.subscribe("#", 1)  # Subscribe to all topics
 
 # Func for receiving msgs
-def on_message(client, userdata, msg):                      
+
+
+def on_message(client, userdata, msg):
     print("topic: " + msg.topic)
     print("payload: " + str(msg.payload))
- 
-mqttc = mqtt.Client() 
-mqttc.on_connect = on_connect    
+
+
+mqttc = mqtt.Client()
+mqttc.on_connect = on_connect
 mqttc.on_message = on_message
 
 aws_iot_endpoint = iot["aws_iot_endpoint"]
 port_number = int(iot["port_number"])
-ca_path = iot["ca_path"]                                  
-certificate_path = iot["certificate_path"]                          
-private_key_path = iot["private_key_path"]  
+ca_path = iot["ca_path"]
+certificate_path = iot["certificate_path"]
+private_key_path = iot["private_key_path"]
 
-mqttc.tls_set(ca_path, certfile=certificate_path, keyfile=private_key_path, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)      
- 
-mqttc.connect(aws_iot_endpoint, port_number, keepalive=60)               # connect to aws server
- 
-mqttc.loop_forever()                                        # Start receiving in loop
+mqttc.tls_set(ca_path, certfile=certificate_path, keyfile=private_key_path,
+              cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
+
+# connect to aws server
+mqttc.connect(aws_iot_endpoint, port_number, keepalive=60)
+
+# Start receiving in loop
+mqttc.loop_forever()

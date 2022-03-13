@@ -5,7 +5,7 @@ then
     echo "usage: ./change_temperature min_temperature max_temperature"
 else
     
-    file=dht_test.py
+    file=cmpt_pi.py
     min_value=$1
     max_value=$2
 
@@ -31,12 +31,12 @@ else
     fi
 
     # if passing all checks, continue the execution
-    sed -i "s/min_value=.*/min_value='$min_value'/" $file
-    sed -i "s/max_value=.*/max_value='$max_value'/" $file
+    sed -i "s/min_value =.*/min_value = '$min_value'/" $file
+    sed -i "s/max_value =.*/max_value = '$max_value'/" $file
 
     # kill the current running program
-    pkill -9 -f dht_test.py
+    pkill -9 -f cmpt_pi.py
 
     # restart the program
-    python3 dht_test.py
+    python3 cmpt_pi.py
 fi
